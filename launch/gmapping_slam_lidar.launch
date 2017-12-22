@@ -6,9 +6,10 @@
      # rosrun rosserial_python serial_node.py /dev/ttyACM0
      # rosrun map_server map_saver -f map /map:=map
 
-     # TO change static ip, follow spring berman's website then
+     # TO change static ip, follow spring berman's website then (add to bashrc)
      # sudo ifconfig wlan0 down
      # sudo ifconfig wlan0 new ip address
+     # source ~/.bashrc
 
      # sudo service ssh restart
      # sudo ufw allow 22
