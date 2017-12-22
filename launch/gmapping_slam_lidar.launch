@@ -6,6 +6,10 @@
      # rosrun rosserial_python serial_node.py /dev/ttyACM0
      # rosrun map_server map_saver -f map /map:=map
 
+     # TO change static ip, follow spring berman's website then
+     # sudo ifconfig wlan0 down
+     # sudo ifconfig wlan0 new ip address
+
      # sudo service ssh restart
      # sudo ufw allow 22
 
@@ -23,6 +27,11 @@
      # ROS master on raspberry pi
      # Add hostname of raspberry pi to PC's /etc/hosts (192.168.0.16 kmondal-desktop)
      # https://answers.ros.org/question/90536/ros-remote-master-can-see-topics-but-no-data/
+     # export ROS_MASTER_URI=http://192.168.0.12:11311
+     # export ROS_ID = 192.168.0.12
+
+     # sudo apt install dphys-swapfile
+     # https://www.youtube.com/watch?v=excSIVb7y8w
 
     <param name="/use_sim_time" value="false"/> 
        
