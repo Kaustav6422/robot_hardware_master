@@ -34,6 +34,12 @@
      # sudo apt install dphys-swapfile
      # https://www.youtube.com/watch?v=excSIVb7y8w
 
+     # Static ip
+     # sudo nano /etc/rc.local 
+     # sudo ifconfig wlan0 192.168.0.101
+
+     # sudo shutdown -r now 
+
     <param name="/use_sim_time" value="false"/> 
        
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />

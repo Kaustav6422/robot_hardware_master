@@ -6,7 +6,7 @@
      # rosrun rosserial_python serial_node.py /dev/ttyACM0
      # rosrun map_server map_saver -f map /map:=/robot1/map
 
-    <param name="/use_sim_time" value="false"/> 
+   <!-- <param name="/use_sim_time" value="false"/> 
        
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />
 
@@ -17,7 +17,6 @@
         <param name="~baudrate" value="115200" /> 
     </node>
 
-    <!-- transformation between laser_link and base_link-->
     <node name="base_link_to_laser" pkg="tf" type="static_transform_publisher" args="0.12 0 0 3.14 0 0 /base_link /laser 100" />
 
     <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_hardware)/map.yaml" > 
@@ -25,25 +24,14 @@
     </node>
 
     <include file="$(find robot_hardware)/launch/includes/amcl.launch.xml">
-      <!-- <arg name="robot" value="robot_0" /> -->
+      <arg name="robot" value="" /> 
       <arg name="initial_pose_x" value="0.0" />
       <arg name="initial_pose_y" value="0.0" />
       <arg name="initial_pose_a" value="0.0" />
     </include>
 
-    <!-- <remap from="scan" to="base_scan"/> -->
-
     <node pkg="collvoid_controller" type="collvoid_visualizer.py" name="controller_viz" output="screen"/> 
     <node pkg="collvoid_controller" type="controller.py" name="controller" output="screen"/> 
-
-    <!-- <rosparam command="load" file="$(find collvoid_stage)/params/stage_params.yaml"/> -->
-    <!-- <rosparam command="load" file="$(find collvoid_stage)/params_created.yaml"/> -->
-
-    <!-- <include file="$(find robot_hardware)/launch/includes/move_base_collvoid.launch">
-      <arg name="robot" value=""/>
-      <arg name="type" value="turtle"/>
-      <arg name="controlled" value="true"/>
-    </include> -->
 
     <include file="$(find robot_hardware)/launch/includes/move_base_dwa.launch" >
       <arg name="robot" value=""/>
@@ -53,46 +41,99 @@
 
     <node pkg="collvoid_controller" type="controller_robots.py" name="controller_robots" /> 
 
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_hardware)/robot_hardware_nav_orca.rviz">  
+    </node>  --> 
 
+<!-- %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% -->
 
-    <!-- Goal point published to /move_base_simple/goal -->
-    <!--<node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
-      <rosparam file="$(find robot_hardware)/launch/includes/costmap_common_params.yaml" command="load" ns="global_costmap" />
-      <rosparam file="$(find robot_hardware)/launch/includes/costmap_common_params.yaml" command="load" ns="local_costmap" />
-      <rosparam file="$(find robot_hardware)/launch/includes/local_costmap_params.yaml" command="load" />
-      <rosparam file="$(find robot_hardware)/launch/includes/global_costmap_params.yaml" command="load" />
-      <rosparam file="$(find robot_hardware)/launch/includes/base_local_planner_params.yaml" command="load" />
-      <rosparam file="$(find robot_hardware)/launch/includes/move_base_params.yaml" command="load" />
-      <rosparam file="$(find robot_hardware)/launch/includes/global_planner_params.yaml" command="load" /> 
-      <rosparam file="$(find robot_hardware)/launch/includes/navfn_global_planner_params.yaml" command="load" />
+    <param name="/use_sim_time" value="false"/> 
 
-      <param name="global_costmap/global_frame" value="map"/>
-      <param name="global_costmap/robot_base_frame" value="base_link"/>
-      <param name="global_costmap/laser_scan_sensor/sensor_frame" value="laser"/>
-      <param name="global_costmap/laser_scan_sensor/topic" value="scan"/>    
-  
-      <param name="local_costmap/global_frame" value="odom"/>
-      <param name="local_costmap/robot_base_frame" value="base_link"/>
-      <param name="local_costmap/laser_scan_sensor/sensor_frame" value="laser"/>
-      <param name="local_costmap/laser_scan_sensor/topic" value="scan"/>
-      <param name="local_costmap/obstacle_layer/laser_scan_sensor/topic" value="scan"/>
-    </node> -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_hardware)/map.yaml" > 
+        <param name="frame_id" value="/map" /> 
+    </node> 
 
     <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_hardware)/robot_hardware_nav_orca.rviz">  
-    </node>
+    </node>  
 
+    <group ns="robot_0">
 
+       <param name="tf_prefix" value="robot_0" />
 
+       <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+  
+       <node pkg = "robot_hardware" name = "diff_tf2_group" type = "diff_tf2_group" output = "screen" />
 
+       <node name="rosserial_lipo" pkg="rosserial_python" type="serial_node.py" output="screen">
+        <param name="~port" value="/dev/ttyACM0" />
+        <param name="~baudrate" value="115200" /> 
+       </node>
 
+       <node name="base_link_to_laser" pkg="tf" type="static_transform_publisher" args="0.12 0 0 3.14 0 0 robot_0/base_link robot_0/laser 100" /> 
 
+        <include file="$(find robot_hardware)/launch/includes/amcl_group.launch.xml">
+          <arg name="tf_prefix" value="robot_0" />
+          <arg name="scan_topic" value="/robot_0/scan" />
+          <arg name="use_map_topic" value="true" /> 
+          <arg name="initial_pose_x" value="0.0" />
+          <arg name="initial_pose_y" value="0.0" />
+          <arg name="initial_pose_a" value="0.0" />
+          <arg name="global_frame_id" value="/map" />
+        </include>
 
+       <node pkg="collvoid_controller" type="controller_robots.py" name="controller_robots" /> 
+ 
+    </group>  
 
+       <!-- <include file="$(find robot_hardware)/launch/includes/amcl_group.launch.xml">
+          <arg name="robot" value="robot_0" />
+          <arg name="scan_topic" value="scan" /> 
+          <arg name="initial_pose_x" value="0.0" />
+          <arg name="initial_pose_y" value="0.0" />
+          <arg name="initial_pose_a" value="0.0" />
+          <arg name="use_map_topic" value="true" />
+       </include> -->
 
+       <!-- <include file="$(find robot_hardware)/launch/includes/amcl.launch.xml">
+          <arg name="robot" value="" /> 
+          <arg name="initial_pose_x" value="0.0" />
+          <arg name="initial_pose_y" value="0.0" />
+          <arg name="initial_pose_a" value="0.0" />
+        </include> --> 
+
+  <!-- <node pkg="stage_ros" type="stageros" name="stageros" args="$(find collvoid_stage)/world/swarmlab_created.world" respawn="false" output="screen" /> -->
+    
+                  <!-- <param name="odom_model_type"           value="diff"/>
+            <param name="odom_alpha5"               value="0.1"/>
+            <param name="gui_publish_rate"          value="10.0"/>
+            <param name="laser_max_beams"             value="60"/>
+            <param name="min_particles"             value="500"/>
+            <param name="max_particles"             value="2000"/>
+            <param name="kld_err"                   value="0.05"/>
+            <param name="kld_z"                     value="0.99"/>
+            <param name="odom_alpha1"               value="0.1"/> 
+            <param name="odom_alpha2"               value="0.1"/>
+            <param name="odom_alpha3"               value="0.1"/> 
+            <param name="odom_alpha4"               value="0.1"/> 
+            <param name="laser_z_hit"               value="0.5"/>
+            <param name="laser_z_short"             value="0.05"/>
+            <param name="laser_z_max"               value="0.05"/>
+            <param name="laser_z_rand"              value="0.5"/>
+            <param name="laser_sigma_hit"           value="0.2"/>
+            <param name="laser_lambda_short"        value="0.1"/>
+            <param name="laser_model_type"          value="likelihood_field"/>
+            <param name="laser_likelihood_max_dist" value="2.0"/>
+            <param name="update_min_d"              value="0.2"/> 
+            <param name="update_min_a"              value="0.2"/>  
+            <param name="resample_interval"         value="1"/>   
+            <param name="transform_tolerance"       value="1.0"/> 
+            <param name="recovery_alpha_slow"       value="0.0"/> 
+            <param name="recovery_alpha_fast"       value="0.0"/>
+            <param name="initial_pose_x"            value="0.0"/>
+            <param name="initial_pose_y"            value="0.0"/>
+            <param name="initial_pose_a"            value="0.0"/> -->
+    
     
 
-
-
-    
+      
 
 </launch> 

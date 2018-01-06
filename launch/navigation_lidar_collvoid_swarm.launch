@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<launch>
+    
+     # ls -l /dev |grep ttyACM
+     # sudo chmod 666 /dev/ttyACM0
+     # rosrun rosserial_python serial_node.py /dev/ttyACM0
+     # rosrun map_server map_saver -f map /map:=/robot1/map
+
+    <param name="/use_sim_time" value="false"/> 
+       
+    <include file="$(find rplidar_ros)/launch/rplidar.launch" />
+
+    <node pkg = "robot_hardware" name = "diff_tf2" type = "diff_tf2" output = "screen" />
+
+    <node name="rosserial_lipo" pkg="rosserial_python" type="serial_node.py" output="screen">
+        <param name="~port" value="/dev/ttyACM0" />
+        <param name="~baudrate" value="115200" /> 
+    </node>
+
+    <!-- transformation between laser_link and base_link-->
+    <node name="base_link_to_laser" pkg="tf" type="static_transform_publisher" args="0.12 0 0 3.14 0 0 /base_link /laser 10" /> 
+
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_hardware)/map.yaml" > 
+        <param name="frame_id" value="/map" />
+    </node>
+
+    <node pkg="collvoid_controller" type="controller.py" name="controller" output="screen" />
+    <node pkg="collvoid_controller" type="collvoid_visualizer.py" name="controller_viz" output="screen" />
+
+
+    <group ns="robot_101">
+
+       <include file="$(find robot_hardware)/launch/includes/move_base_collvoid.launch">
+          <arg name="robot" value="robot_101" />
+          <arg name="type"  value="turtle"    />
+          <arg name="controlled" value="true" />
+       </include>
+
+       <!-- <include file="$(find robot_hardware)/launch/includes/amcl.launch.xml" /> -->
+       <include file="$(find robot_hardware)/launch/includes/amcl_orca.launch.xml">
+         <arg name="robot" value="robot_101" /> -->
+         <arg name="initial_pose_x" value="0.0" />
+         <arg name="initial_pose_y" value="0.0" />
+         <arg name="initial_pose_a" value="0.0" />
+       </include>
+
+       <node pkg="collvoid_controller" type="controller_robots.py" name="controller_robots" />
+
+    </group>
+
+
+    <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_hardware)/robot_hardware_nav_1.rviz">  
+    </node> -->
+    <!-- <remap from="move_base_simple/goal" to="robot1/move_base_simple/goal"/> -->  
+
+</launch> 
