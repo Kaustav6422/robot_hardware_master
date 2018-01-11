@@ -60,14 +60,14 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        base_link:
-          Value: true
-        laser:
-          Value: false
         map:
           Value: true
-        odom:
-          Value: false
+        robot_0/base_link:
+          Value: true
+        robot_0/laser:
+          Value: true
+        robot_0/odom:
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -75,9 +75,9 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          odom:
-            base_link:
-              laser:
+          robot_0/odom:
+            robot_0/base_link:
+              robot_0/laser:
                 {}
       Update Interval: 0
       Value: true
@@ -116,7 +116,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.0500000007
       Style: Flat Squares
-      Topic: /scan
+      Topic: /robot_0/scan
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -134,7 +134,7 @@ Visualization Manager:
       Shaft Length: 0.230000004
       Shaft Radius: 0.00999999978
       Shape: Arrow (Flat)
-      Topic: /particlecloud
+      Topic: /robot_0/particlecloud
       Unreliable: false
       Value: true
     - Alpha: 1

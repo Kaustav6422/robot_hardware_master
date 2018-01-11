@@ -19,6 +19,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   tf
+
+  collvoid_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -55,11 +57,13 @@ find_package(catkin REQUIRED COMPONENTS
 ##   * add every package in MSG_DEP_SET to generate_messages(DEPENDENCIES ...)
 
 ## Generate messages in the 'msg' folder
-# add_message_files(
-#   FILES
-#   Message1.msg
-#   Message2.msg
-# )
+add_message_files(
+  FILES
+  AggregatedPoseTwist.msg
+  collvoid_debug.msg
+  PoseTwistWithCovariance.msg
+  PoseArrayWeighted.msg
+)
 
 ## Generate services in the 'srv' folder
 # add_service_files(
@@ -76,10 +80,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
+#generate_messages(
 #   DEPENDENCIES
-#   geometry_msgs#   move_base_msgs#   nav_msgs#   std_msgs
-# )
+#    geometry_msgs#   move_base_msgs#   nav_msgs#   std_msgs
+#)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -113,8 +117,9 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robot_hardware
-#  CATKIN_DEPENDS actionlib depthimage_to_laserscan geometry_msgs move_base_msgs nav_msgs openni_launch robot_pose_ekf robot_state_publisher roscpp rospy std_msgs tf
+CATKIN_DEPENDS actionlib depthimage_to_laserscan geometry_msgs move_base_msgs nav_msgs robot_pose_ekf robot_state_publisher roscpp rospy std_msgs tf collvoid_msgs
 #  DEPENDS system_lib
+#  openni_launch
 )
 
 ###########

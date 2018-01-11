@@ -8,12 +8,11 @@
   <arg name="initial_pose_y" default="0.0"/> <!--  Jan 5th 2018 -->
   <arg name="initial_pose_a" default="0.0"/> <!--  Jan 5th 2018 --> 
   <arg name="global_frame_id" default="map" /> <!--  Jan 5th 2018 --> 
-  <arg name="tf_prefix"   default="tf_p" /> <!--  Jan 5th 2018 --> 
+  <arg name="tf_prefix"   default="tf_p" /> <!--  Jan 5th 2018 -->
 
   <arg name="robot" />
-  
-  <!--<node pkg="collvoid_amcl" type="collvoid_amcl" name="amcl" > --> <!-- ns="$(arg robot)" > -->
-  <node pkg="amcl" type="amcl" name="amcl" > 
+
+  <node pkg="collvoid_amcl" type="collvoid_amcl" name="amcl"> <!-- ns="$(arg robot)"> -->
     <!-- Publish scans from best pose at a max of 10 Hz -->
     <param name="odom_model_type" value="diff"/> <!-- -->
     <param name="transform_tolerance" value="0.2" /> <!-- -->
@@ -40,9 +39,9 @@
     <param name="laser_likelihood_max_dist" value="2.0"/><!-- -->
     <param name="update_min_d" value="0.1"/><!-- -->
     <param name="update_min_a" value="0.2"/><!-- -->
-    <param name="base_frame_id" value="$(arg tf_prefix)/base_link"/>        <!--  Jan 5th 2018 -->
-    <param name="odom_frame_id" value="$(arg tf_prefix)/odom"/>             <!--  Jan 5th 2018 -->
-    <param name="global_frame_id" value="$(arg global_frame_id)"/>          <!--  Jan 5th 2018 -->
+    <param name="base_frame_id" value="$(arg tf_prefix)/base_link"/><!-- -->
+    <param name="odom_frame_id" value="$(arg tf_prefix)/odom"/><!-- -->
+    <param name="global_frame_id" value="$(arg global_frame_id)"/><!-- -->
 
     <param name="initial_pose_x"            value="$(arg initial_pose_x)"/> <!--  Jan 5th 2018 -->
     <param name="initial_pose_y"            value="$(arg initial_pose_y)"/> <!--  Jan 5th 2018 -->
@@ -56,10 +55,8 @@
     <param name="resample_interval" value="2"/> <!-- -->
     <param name="recovery_alpha_slow" value="0.0"/><!-- -->
     <param name="recovery_alpha_fast" value="0.0"/><!-- -->
-    <!-- <remap from="scan" to="base_scan"/> -->                            <!--  Jan 5th 2018 -->
-    <remap from="static_map" to="/static_map"/> <!-- service -->
-    
-    
+    <!-- <remap from="scan" to="base_scan"/> -->                             <!--  Jan 5th 2018 -->
+    <remap from="static_map" to="/static_map"/>  <!-- service --> 
   </node>
 
 </launch>
