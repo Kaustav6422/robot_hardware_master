@@ -8,6 +8,8 @@
 #include <geometry_msgs/Vector3.h>
 #include <sensor_msgs/Joy.h>
 
+
+
 class Odometry_calc
 {
 
@@ -36,7 +38,7 @@ private:
 	ros::Duration t_delta;
 	ros::Time t_next;
 	ros::Time then;
-        ros::Time current_time, last_time;
+    ros::Time current_time, last_time;
 
 	double dx;
 	double dr;
@@ -123,6 +125,9 @@ void Odometry_calc::update()
         {
 
 		elapsed = now.toSec() - then.toSec(); 
+		ROS_INFO_STREAM("elapsed =" << elapsed);
+		ROS_INFO_STREAM("now =" << now.toSec());
+		ROS_INFO_STREAM("then =" << then.toSec());
 		
                 arduino_vd = Radius*(arduino_wL + arduino_wR)/2 ;
                 arduino_wd = Radius*(arduino_wL - arduino_wR)/Length ;
@@ -134,6 +139,8 @@ void Odometry_calc::update()
                 x_final = x_final + (cos(theta_final)*dx - sin(theta_final)*dy) ;
                 y_final = y_final + (sin(theta_final)*dx + cos(theta_final)*dy) ;
                 theta_final = theta_final + dtheta ;
+
+                //theta_avg = ( theta_final + arduino_theta )/ 2 ;
 
                 if (theta_final >= 2*3.14)
                    theta_final = theta_final - 2*3.14 ;
@@ -202,7 +209,7 @@ void Odometry_calc::update()
                 //odom_vd = (arduino_dt == 0) ? 0 : dxy/arduino_dt ;
                 //odom_wd = (arduino_dt == 0) ? 0 : dtheta/arduino_dt ; 
                 odom.twist.twist.linear.x = arduino_vd;
-		odom.twist.twist.linear.y = 0;
+		odom.twist.twist.linear.y = arduino_theta ;
 		odom.twist.twist.angular.z = arduino_wd;
 
                 

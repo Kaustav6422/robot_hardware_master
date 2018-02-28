@@ -8,19 +8,22 @@ project(robot_hardware)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  actionlib
+
   depthimage_to_laserscan
   geometry_msgs
-  move_base_msgs
-  nav_msgs
   robot_pose_ekf
   robot_state_publisher
   roscpp
   rospy
-  std_msgs
   tf
-
   collvoid_msgs
+  move_base_msgs
+  actionlib
+  nav_msgs
+  std_msgs
+  visualization_msgs # added
+  message_generation # added
+  
 )
 
 ## System dependencies are found with CMake's conventions
@@ -80,10 +83,10 @@ add_message_files(
 # )
 
 ## Generate added messages and services with any dependencies listed here
-#generate_messages(
-#   DEPENDENCIES
-#    geometry_msgs#   move_base_msgs#   nav_msgs#   std_msgs
-#)
+generate_messages(
+   DEPENDENCIES
+   collvoid_msgs geometry_msgs  nav_msgs  std_msgs
+)
 
 ################################################
 ## Declare ROS dynamic reconfigure parameters ##
@@ -117,7 +120,7 @@ add_message_files(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES robot_hardware
-CATKIN_DEPENDS actionlib depthimage_to_laserscan geometry_msgs move_base_msgs nav_msgs robot_pose_ekf robot_state_publisher roscpp rospy std_msgs tf collvoid_msgs
+CATKIN_DEPENDS depthimage_to_laserscan geometry_msgs robot_pose_ekf robot_state_publisher roscpp rospy std_msgs tf collvoid_msgs move_base_msgs actionlib nav_msgs std_msgs visualization_msgs message_runtime
 #  DEPENDS system_lib
 #  openni_launch
 )
@@ -152,6 +155,7 @@ add_executable(diff_tf2_group src/diff_tf2_group.cpp)
 #add_executable(outerloop2 src/outerloop2.cpp)
 add_executable(outerloop src/outerloop.cpp)
 add_executable(diff_tf_joystick src/diff_tf_joystick.cpp)
+#add_executable(position_share src/position_share.cpp)
 
 
 ## Rename C++ executable without prefix
@@ -173,6 +177,7 @@ target_link_libraries(diff_tf2_group ${catkin_LIBRARIES})
 #target_link_libraries(outerloop2 ${catkin_LIBRARIES})
 target_link_libraries(outerloop ${catkin_LIBRARIES})
 target_link_libraries(diff_tf_joystick ${catkin_LIBRARIES})
+#target_link_libraries(position_share ${catkin_LIBRARIES})
 
 
 #############

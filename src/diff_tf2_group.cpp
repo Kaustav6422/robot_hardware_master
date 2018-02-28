@@ -124,6 +124,9 @@ void Odometry_calc::update()
         {
 
 		elapsed = now.toSec() - then.toSec(); 
+                ROS_INFO_STREAM("elapsed =" << elapsed);
+		ROS_INFO_STREAM("now =" << now.toSec());
+		ROS_INFO_STREAM("then =" << then.toSec());
 		
                 arduino_vd = Radius*(arduino_wL + arduino_wR)/2 ;
                 arduino_wd = Radius*(arduino_wL - arduino_wR)/Length ;
