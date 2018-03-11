@@ -21,7 +21,7 @@
      #sudo dkms install 8188eu/1.0 (to execute this in raspbery pi, you need to install the raspberry pi kernel headers first - BEWARE installation is slow)
      #sudo modprobe 8188eu
      #https://askubuntu.com/questions/912498/tl-wn722n-is-not-recognized
-     #https://www.raspberrypi.org/forums/viewtopic.php?f=46&t=178205
+     #https://www.raspberrypi.org/forums/viewtopic.php?f=46t=178205
      #https://www.raspberrypi.org/forums/viewtopic.php?t=154749
 
      # ROS networking
@@ -56,7 +56,7 @@
     </node>
 
     <!-- transformation between laser_link and base_link-->
-    <node name="base_link_to_laser" pkg="tf" type="static_transform_publisher" args="0.12 0 0 3.14 0 0 /base_link /laser 10" /> 
+    <node name="base_link_to_laser" pkg="tf" type="static_transform_publisher" args="0.12 0 0 0 0 0 /base_link /laser 10" /> 
   
     <!--GMapping does not publish geometry_msgs/PoseWithCovarianceStamped message as robot_pose_ekf and other packages do. Instead it provide transformation from map frame to odom frame. In combination    with transformation from odom frame to robot base frame (provided by your odometry) you have estimation of your robot pose. -->
     <node pkg="gmapping" type="slam_gmapping" name="slam_gmapping" output="screen" >
@@ -103,12 +103,8 @@
     <!--<remap from="cmd_vel" to="mobile_base/commands/velocity"/> for kobuki --> 
     <!--param name="base_local_planner" value="eband_local_planner/EBandPlannerROS" /-->
 
-    
-
-
-    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_hardware)/robot_hardware_slam_1.rviz">
-      <!-- <remap from="move_base_simple/goal" to="robot1/move_base_simple/goal"/> --> 
-    </node> 
+    <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_hardware)/robot_hardware_slam_1.rviz">
+    </node> -->
 
 
 

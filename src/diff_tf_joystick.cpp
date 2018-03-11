@@ -19,7 +19,10 @@ private:
 
         double arduino_wL ;
         double arduino_wR ;
-        double arduino_theta ;
+        double IMU_theta ;
+        double IMU_theta_prev ;
+        double arduino_IMUomega ;
+        double encoder_theta ;
         ros::Time arduino_timestamp ;
         double arduino_vd ;
         double arduino_wd ;
@@ -33,6 +36,9 @@ private:
 	ros::Publisher odom_pub;
         ros::Publisher cmd_vel_pub ;
 	tf::TransformBroadcaster odom_broadcaster;
+
+        ros::Publisher debug_pub ;
+        geometry_msgs::Twist debug_msg ;
 
 	double rate;
 	ros::Duration t_delta;
@@ -52,7 +58,7 @@ private:
         double joystick_wd ;
         
 
-        void arduino_rpm_callback(const geometry_msgs::Vector3Stamped& rpm);
+        void arduino_rpm_callback(const geometry_msgs::Twist& rpm);
         void joystick_callback(const sensor_msgs::Joy::ConstPtr& joy);
 	void init_variables();
 	void update();
@@ -76,15 +82,20 @@ Odometry_calc::Odometry_calc()
 
         // Publish cmd_vel
         cmd_vel_pub = n.advertise<geometry_msgs::Twist>("cmd_vel", 50) ; 
+
+        // Publish debug message
+        debug_pub = n.advertise<geometry_msgs::Twist>("debug",50);
 }
 
 void Odometry_calc::init_variables()
 {
         Radius     = 0.045 ;
-        Length     = 0.53  ;
+        Length     = 0.55  ;
         arduino_wL = 0 ;
         arduino_wR = 0 ;
-        arduino_theta = 0 ;
+        IMU_theta = 0 ;
+        IMU_theta_prev = 0 ;
+        encoder_theta = 0 ;
         arduino_vd = 0 ;
         arduino_wd = 0 ;
 
@@ -128,7 +139,10 @@ void Odometry_calc::update()
         double dtheta ;
         double dxy ;
         double dx ;
-        double dy ;  
+        double dy ; 
+
+        double arduino_wd_ENC ;
+        double arduino_wd_IMU ; 
 
 	if ( now > t_next) 
         {
@@ -136,19 +150,26 @@ void Odometry_calc::update()
 		elapsed = now.toSec() - then.toSec(); 
 		
                 arduino_vd = Radius*(arduino_wL + arduino_wR)/2 ;
-                arduino_wd = Radius*(arduino_wL - arduino_wR)/Length ;
+                //arduino_wd = Radius*(arduino_wL - arduino_wR)/Length ;
+                //arduino_wd_ENC = Radius*(arduino_wL - arduino_wR)/Length ;
+                arduino_wd_IMU = arduino_IMUomega ;
+                //IMU_theta = IMU_theta + arduino_wd_IMU*elapsed ; 
+                //arduino_wd_IMU = (arduino_theta - arduino_theta_prev)/elapsed ;
+                arduino_wd = arduino_wd_IMU ; //(arduino_wd_ENC + arduino_wd_IMU)/2 ; (USING ONLY IMU data for wd)
+                //arduino_theta_prev = arduino_theta ;
                
                 dxy    = arduino_vd * elapsed ; //arduino_dt ;
                 dtheta = arduino_wd * elapsed ; //arduino_dt ;
                 dx =  cos(dtheta) * dxy ;
                 dy = -sin(dtheta) * dxy ;
+                theta_final = theta_final + dtheta ;
                 x_final = x_final + (cos(theta_final)*dx - sin(theta_final)*dy) ;
                 y_final = y_final + (sin(theta_final)*dx + cos(theta_final)*dy) ;
-                theta_final = theta_final + dtheta ;
+                
 
-                if (theta_final >= 2*3.14159)
+                if (theta_final >= 3.14159)
                    theta_final = theta_final - 2*3.14159 ;
-                if (theta_final <= -2*3.14159)
+                if (theta_final <= -3.14159)
                    theta_final = theta_final + 2*3.14159 ;
 
                 //x_final = x_final + cos(theta_final)*vd*elapsed ;
@@ -218,13 +239,22 @@ void Odometry_calc::update()
                 odom_pub.publish(odom);
 
                 geometry_msgs::Twist cmd_data ;
-                cmd_data.linear.x = joystick_vd ; // "-ve" to make control signal positive
-                cmd_data.linear.y = theta_final*180/3.14159 ;
+                cmd_data.linear.x = -joystick_vd ; // "-ve" to make control signal positive
+                cmd_data.linear.y = 0;
                 cmd_data.linear.z = 0 ;
                 cmd_data.angular.x = 0   ;      
                 cmd_data.angular.y = 0   ;     
-                cmd_data.angular.z = joystick_wd   ;     
+                cmd_data.angular.z = -joystick_wd   ;     
                 cmd_vel_pub.publish(cmd_data); 
+
+                // Debug message
+                debug_msg.linear.x = (theta_final)*(180/3.14159) ;
+                debug_msg.linear.y = 0 ;
+                debug_msg.linear.z = 0 ;
+                debug_msg.angular.x = arduino_wd_ENC ;
+                debug_msg.angular.y = arduino_wd_IMU ;
+                debug_msg.angular.z = arduino_wd ;
+                debug_pub.publish(debug_msg);
 
                 then = now;
                 ros::spinOnce();
@@ -232,12 +262,12 @@ void Odometry_calc::update()
           }
 }
             
-void Odometry_calc::arduino_rpm_callback(const geometry_msgs::Vector3Stamped& rpm)
+void Odometry_calc::arduino_rpm_callback(const geometry_msgs::Twist& rpm)
 {
-   arduino_wL = rpm.vector.x ;
-   arduino_wR = rpm.vector.y ;
-   arduino_theta = rpm.vector.z ;
-   arduino_timestamp = rpm.header.stamp ;
+   arduino_wL = rpm.linear.x ;
+   arduino_wR = rpm.linear.y ;
+   arduino_IMUomega = rpm.angular.z ;
+   //arduino_timestamp = rpm.header.stamp ;
 }
 
 void Odometry_calc::joystick_callback(const sensor_msgs::Joy::ConstPtr& joy)
