@@ -103,8 +103,8 @@
     <!--<remap from="cmd_vel" to="mobile_base/commands/velocity"/> for kobuki --> 
     <!--param name="base_local_planner" value="eband_local_planner/EBandPlannerROS" /-->
 
-    <!-- <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_hardware)/robot_hardware_slam_1.rviz">
-    </node> -->
+    <node pkg="rviz" type="rviz" name="rviz" args="-d $(find robot_hardware)/robot_hardware_slam_1.rviz">
+    </node>
 
 
 
