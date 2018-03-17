@@ -40,6 +40,10 @@
 
      # sudo shutdown -r now 
 
+     # Get the dimensions of the pgm (x pixels by y pixels) then examine your yaml file. In the yaml file the resolution of the map is given in meters/pixel. 
+     # This will allow you to determine the size of your map in meters. You would figure out the size of objects in the map in a similar fashion (i.e., multiply 
+     # the number of pixels your object takes by the resolution of your map and you'll have the physical size of the object).
+
     <param name="/use_sim_time" value="false"/> 
        
     <include file="$(find rplidar_ros)/launch/rplidar.launch" />
