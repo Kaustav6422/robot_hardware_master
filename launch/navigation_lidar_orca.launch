@@ -48,7 +48,7 @@
 
     <param name="/use_sim_time" value="false"/> 
 
-    <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_hardware)/map.yaml" > 
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_hardware)/map_METS2.yaml" > 
         <param name="frame_id" value="/map" /> 
     </node> 
 
@@ -93,13 +93,13 @@
           <arg name="global_frame_id" value="/map" />
         </include>
 
-        <include file="$(find robot_hardware)/launch/includes/move_base_collvoid.launch">
+        <!-- <include file="$(find robot_hardware)/launch/includes/move_base_collvoid.launch">
           <arg name="robot" value="robot_0"/>
           <arg name="type" value="turtle"/>
           <arg name="controlled" value="true"/>
         </include>   
 
-       <node pkg="collvoid_controller" type="controller_robots.py" name="controller_robots" /> 
+       <node pkg="collvoid_controller" type="controller_robots.py" name="controller_robots" /> -->
  
     </group>
 
