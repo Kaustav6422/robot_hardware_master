@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<launch>
+  
+     <param name="/use_sim_time" value="false"/> 
+
+     <include file="$(find astra_launch)/launch/astra.launch"/>
+
+     <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+        # Use ls -ltr /dev/video*
+        <param name="video_device"    value="/dev/video2" />
+        <param name="image_width"     value="640" />
+        <param name="image_height"    value="480" />
+        <param name="pixel_format"    value="yuyv" /> <!-- "yuyv,mjpeg" /> -->
+        <param name="camera_frame_id" value="camera_rgb_optical_frame" />
+        <param name="io_method" value="mmap"/>
+     </node>
+
+     <node name="image_view" pkg="image_view" type="image_view" respawn="false" output="screen">
+        <remap from="image" to="/usb_cam/image_raw"/>
+        <param name="autosize" value="true" />
+     </node>
+
+     <node pkg="tf" type="static_transform_publisher" name="odom_to_base" args="0 0 0 0 0 0 /odom /chassis 100" />
+     <node pkg="tf" type="static_transform_publisher" name="base_to_camera" args="0 0 0 3.14 0 0 /chassis /camera_link 100" />
+
+     <node pkg="depthimage_to_laserscan" type="depthimage_to_laserscan" name="depthimage_to_laserscan" >
+        <remap from="image" to="camera/depth/image_raw" />
+        <remap from="scan"  to="camera/base_scan" />
+        <param name="output_frame_id" value="camera_depth_frame"/>
+     </node> 
+
+     <include file="$(find robot_hardware)/launch/rtab.launch">
+        <arg name="database_path" value= "/home/kaustav/.ros/rtabmap.db" /> <!-- "rtabmap.db" />-->
+        <arg name="rgb_topic" value="/usb_cam/image_raw" /> <!--  changed to /usb_cam/camera_info for Orbbec Astra -->
+        <arg name="depth_topic" value="/camera/depth/image_raw" />
+        <arg name="camera_info_topic" value="/usb_cam/camera_info" /> <!-- changed to /usb_cam/camera_info for Orbbec Astra --> 
+        <arg name="camera_scan_topic" value="/camera/base_scan" />
+     </include> -->
+
+     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find robot_hardware)/robot_slam.rviz" respawn="false"/>
+     
+</launch> 

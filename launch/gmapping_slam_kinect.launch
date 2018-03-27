@@ -110,7 +110,6 @@
 
     <!-- Goal point published to /move_base_simple/goal -->
     <node pkg="move_base" type="move_base" respawn="false" name="move_base_node" output="screen">
-
       <param name="footprint_padding" value="0.01" />
       <param name="controller_frequency" value="5.0" /> <!-- The rate in Hz at which to run the control loop and send velocity commands to the base. -->
       <param name="controller_patience" value="3.0" /> <!-- How long the controller will wait in seconds without receiving a valid control before space-clearing operations are performed.  -->
